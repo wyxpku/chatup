@@ -1,15 +1,19 @@
 import socket
+
+DEFAULT_BUF_SIZE = 2048
+
 host = '127.0.0.1'
 port = 23333
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((host, port))
+saddr = (host, port)
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 while True:
-    data = input('Please input something:')
-    if data == 'end':
-        break
-    s.sendall(data.encode('utf8'))
-    ret = s.recv(1024)
-    print(ret.decode('utf8'))
-s.close()
+    msg = input()
+    if not msg:
+    	break
+    client.sendto(msg.encode('utf8'), saddr)
+    data, addr = client.recvfrom(DEFAULT_BUF_SIZE)
+    print('received:', data.decode('utf8'), 'from', addr)
+
+client.close()
